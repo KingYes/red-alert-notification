@@ -13,7 +13,7 @@ MINUTES_TO_WAIT = 2
 
 
 def notify(title="", body=""):
-    subprocess.Popen(['notify-send', title, body])
+    subprocess.Popen(['notify-send', '--icon=error', title, body])
 
 
 def beep():
