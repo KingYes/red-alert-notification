@@ -1,4 +1,4 @@
-#! /bin/python3
+#!/bin/python3
 # Created by Yakir Sitbon <http://www.yakirs.net/>
 
 import re
