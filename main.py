@@ -25,8 +25,8 @@ def is_smplayer_running():
     return 0 != len(buffer)
 
 
-def do_smplayer_close():
-    os.system('smplayer -send-action close')
+def do_smplayer_pause():
+    os.system('smplayer -send-action pause_and_frame_step')
 
 json_data = open('cities.json')
 area = json.load(json_data)
@@ -56,7 +56,7 @@ while True:
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()) + "\t" + ', '.join(data - n))
 
             if is_smplayer_running():
-                do_smplayer_close()
+                do_smplayer_pause()
 
     n = data
     time.sleep(MINUTES_TO_WAIT)
