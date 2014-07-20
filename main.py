@@ -28,6 +28,7 @@ def is_smplayer_running():
 def do_smplayer_pause():
     os.system('smplayer -send-action pause_and_frame_step')
 
+
 json_data = open('cities.json')
 area_db = json.load(json_data)
 json_data.close()
@@ -52,7 +53,7 @@ while True:
             beep()
             all_cities = [item for sublist in cities.values() for item in sublist]
             notify(', '.join(all_cities))
-            #notify(', '.join(data - n))
+            # notify(', '.join(data - n))
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()) + "\t" + ', '.join(data - n))
 
             if is_smplayer_running():
