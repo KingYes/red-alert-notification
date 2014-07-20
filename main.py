@@ -29,7 +29,7 @@ def do_smplayer_pause():
     os.system('smplayer -send-action pause_and_frame_step')
 
 json_data = open('cities.json')
-area = json.load(json_data)
+area_db = json.load(json_data)
 json_data.close()
 
 n = set()
@@ -45,7 +45,7 @@ while True:
                 code = re.sub("[^\d]+", "", city).strip()
 
                 city_codes = cities.get(code, [])
-                city_codes += area.get(city, [])
+                city_codes += area_db.get(city, [])
                 cities[code] = city_codes
 
         if len(cities) > 0:
