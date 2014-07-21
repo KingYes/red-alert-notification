@@ -54,7 +54,7 @@ while True:
             all_cities = [item for sublist in cities.values() for item in sublist]
             notify(', '.join(all_cities))
             # notify(', '.join(data - n))
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()) + "\t" + ', '.join(data - n))
+            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + "\t" + ', '.join(data - n))
 
             if is_smplayer_running():
                 do_smplayer_pause()
