@@ -13,7 +13,7 @@ MINUTES_TO_WAIT = 2
 
 
 def notify(title="", body=""):
-    subprocess.Popen(['notify-send', '--icon=error', title, body])
+    subprocess.Popen(['notify-send', '--expire-time=5000', '--hint=int:transient:1', '--urgency=critical', title, body])
 
 
 def beep():
@@ -52,7 +52,7 @@ while True:
         if len(cities) > 0:
             beep()
             all_cities = [item for sublist in cities.values() for item in sublist]
-            notify(', '.join(all_cities))
+            notify(', '.join(data - n), ', '.join(all_cities))
             # notify(', '.join(data - n))
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + "\t" + ', '.join(data - n))
 
