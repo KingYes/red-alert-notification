@@ -12,56 +12,55 @@ OREF_JSON_URL = 'http://www.oref.org.il/WarningMessages/alerts.json'
 MINUTES_TO_WAIT = 2
 
 
-def notify(title="", body=""):
-    subprocess.Popen(['notify-send', '--expire-time=5000', '--hint=int:transient:1', '--urgency=critical', title, body])
+class RedAlertNotification:
+    def __init__(self):
+        super().__init__()
+        json_data = open('cities.json')
+        self.area_db = json.load(json_data)
+        json_data.close()
 
+    def notify(self, title="", body=""):
+        subprocess.Popen(['notify-send', '--expire-time=5000', '--hint=int:transient:1', '--urgency=critical', title, body])
 
-def beep():
-    print("\a")
+    def beep(self):
+        print("\a")
 
-
-def is_smplayer_running():
-    buffer = os.popen('ps -eo pcpu,pid,user,comm | grep -i "smplayer"$ | sed  "s/ smplayer$//m"').read()
-    return 0 != len(buffer)
-
-
-def do_smplayer_pause():
-    os.system('smplayer -send-action pause_and_frame_step')
-
-
-json_data = open('cities.json')
-area_db = json.load(json_data)
-json_data.close()
-
-n = set()
-while True:
-    try:
-        data = set(json.loads(
-            urllib.request.urlopen(OREF_JSON_URL).read().decode("utf-16"))['data'])
-
-        if data - n != set():
-            cities = {}  # code to cities names
-            for item in data:
-                for city in item.split(','):
-                    city_name = re.sub("\d+", "", city).strip()
-                    code = re.sub("[^\d]+", "", city).strip()
-
-                    city_codes = cities.get(code, [])
-                    city_codes += area_db.get(city, [])
-                    cities[code] = city_codes
-
-            if len(cities) > 0:
-                beep()
-                all_cities = [item for sublist in cities.values() for item in sublist]
-                notify(', '.join(data - n), ', '.join(all_cities))
-                print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + "\t" + ', '.join(data - n))
-
-                if is_smplayer_running():
-                    do_smplayer_pause()
-
-        n = data
-
-    except:
+    def on_alert(self):
         pass
 
-    time.sleep(MINUTES_TO_WAIT)
+    def main_loop(self):
+        n = set()
+        while True:
+            try:
+                data = set(json.loads(
+                    urllib.request.urlopen(OREF_JSON_URL).read().decode("utf-16"))['data'])
+
+                if data - n != set():
+                    cities = {}  # code to cities names
+                    for item in data:
+                        for city in item.split(','):
+                            city_name = re.sub("\d+", "", city).strip()
+                            code = re.sub("[^\d]+", "", city).strip()
+
+                            city_codes = cities.get(code, [])
+                            city_codes += self.area_db.get(city, [])
+                            cities[code] = city_codes
+
+                    if len(cities) > 0:
+                        self.beep()
+                        all_cities = [item for sublist in cities.values() for item in sublist]
+                        self.notify(', '.join(data - n), ', '.join(all_cities))
+                        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + "\t" + ', '.join(data - n))
+
+                        self.on_alert()
+
+                n = data
+
+            except:
+                pass
+
+            time.sleep(MINUTES_TO_WAIT)
+
+if __name__ == "__main__":
+    instance = RedAlertNotification()
+    instance.main_loop()
