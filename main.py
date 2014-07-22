@@ -35,29 +35,34 @@ json_data.close()
 
 n = set()
 while True:
-    data = set(json.loads(
-        urllib.request.urlopen(OREF_JSON_URL).read().decode("utf-16"))['data'])
+    try:
+        data = set(json.loads(
+            urllib.request.urlopen(OREF_JSON_URL).read().decode("utf-16"))['data'])
 
-    if data - n != set():
-        cities = {}  # code to cities names
-        for item in data:
-            for city in item.split(','):
-                city_name = re.sub("\d+", "", city).strip()
-                code = re.sub("[^\d]+", "", city).strip()
+        if data - n != set():
+            cities = {}  # code to cities names
+            for item in data:
+                for city in item.split(','):
+                    city_name = re.sub("\d+", "", city).strip()
+                    code = re.sub("[^\d]+", "", city).strip()
 
-                city_codes = cities.get(code, [])
-                city_codes += area_db.get(city, [])
-                cities[code] = city_codes
+                    city_codes = cities.get(code, [])
+                    city_codes += area_db.get(city, [])
+                    cities[code] = city_codes
 
-        if len(cities) > 0:
-            beep()
-            all_cities = [item for sublist in cities.values() for item in sublist]
-            notify(', '.join(data - n), ', '.join(all_cities))
-            # notify(', '.join(data - n))
-            print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + "\t" + ', '.join(data - n))
+            if len(cities) > 0:
+                beep()
+                all_cities = [item for sublist in cities.values() for item in sublist]
+                notify(', '.join(data - n), ', '.join(all_cities))
+                # notify(', '.join(data - n))
+                print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + "\t" + ', '.join(data - n))
 
-            if is_smplayer_running():
-                do_smplayer_pause()
+                if is_smplayer_running():
+                    do_smplayer_pause()
 
-    n = data
+        n = data
+
+    except:
+        pass
+
     time.sleep(MINUTES_TO_WAIT)
