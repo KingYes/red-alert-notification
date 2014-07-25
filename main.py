@@ -15,12 +15,14 @@ MINUTES_TO_WAIT = 2
 class RedAlertNotification:
     def __init__(self):
         super().__init__()
+        self.last_id = '0'
         json_data = open('cities.json')
         self.area_db = json.load(json_data)
         json_data.close()
 
     def notify(self, title="", body=""):
-        subprocess.Popen(['notify-send', '--expire-time=5000', '--hint=int:transient:1', '--urgency=critical', title, body])
+        subprocess.Popen(
+            ['notify-send', '--expire-time=2000', '--hint=int:transient:1', '--urgency=critical', title, body])
 
     def beep(self):
         print("\a")
@@ -29,13 +31,14 @@ class RedAlertNotification:
         pass
 
     def main_loop(self):
-        n = set()
         while True:
             try:
-                data = set(json.loads(
-                    urllib.request.urlopen(OREF_JSON_URL).read().decode("utf-16"))['data'])
+                n = set()
+                json_data = json.loads(urllib.request.urlopen(OREF_JSON_URL).read().decode("utf-16"))
+                data = set(json_data['data'])
 
-                if data - n != set():
+                if self.last_id != json_data['id']:
+                    self.last_id = json_data['id']
                     cities = {}  # code to cities names
                     for item in data:
                         for city in item.split(','):
