@@ -6,23 +6,37 @@ import urllib.request
 import json
 import time
 import subprocess
-import os
+from gi.repository import Notify
 
 OREF_JSON_URL = 'http://www.oref.org.il/WarningMessages/alerts.json'
 MINUTES_TO_WAIT = 2
+NOTIFY_INSTANCE_ID = 'red_alert_notification'
 
+Notify.init(NOTIFY_INSTANCE_ID)
 
 class RedAlertNotification:
     def __init__(self):
         super().__init__()
+        self.notification = Notify.Notification()
+        self.notification.set_urgency(Notify.Urgency.CRITICAL)
+
         self.last_id = '0'
         json_data = open('cities.json')
         self.area_db = json.load(json_data)
         json_data.close()
 
+    def on_notification_closed(self, event, id, user_data):
+        pass
+
     def notify(self, title="", body=""):
+        """
         subprocess.Popen(
             ['notify-send', '--expire-time=2000', '--hint=int:transient:1', '--urgency=critical', title, body])
+        """
+        self.notification.clear_actions()
+        self.notification.update(title, body, None)
+        self.notification.add_action("close", "Close", self.on_notification_closed, None, None)
+        self.notification.show()
 
     def beep(self):
         print("\a")
