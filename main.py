@@ -26,9 +26,19 @@ class RedAlertNotification:
         self.is_singleton_program = True
 
         self.last_id = '0'
+        self.area_db = self._get_cities_data()
+
+    @staticmethod
+    def _get_cities_data():
         json_data = open('cities.json')
-        self.area_db = json.load(json_data)
+        cities = json.load(json_data)
         json_data.close()
+
+        return cities
+
+    @staticmethod
+    def beep():
+        print("\a")
 
     def on_notification_closed(self, event, id, user_data):
         pass
@@ -42,9 +52,6 @@ class RedAlertNotification:
         self.notification.update(title, body, None)
         self.notification.add_action("close", "Close", self.on_notification_closed, None, None)
         self.notification.show()
-
-    def beep(self):
-        print("\a")
 
     def on_alert(self):
         pass
