@@ -5,20 +5,25 @@ import re
 import urllib.request
 import json
 import time
-import subprocess
+import sys
+import fcntl
 from gi.repository import Notify
 
 OREF_JSON_URL = 'http://www.oref.org.il/WarningMessages/alerts.json'
 MINUTES_TO_WAIT = 2
 NOTIFY_INSTANCE_ID = 'red_alert_notification'
+PID_FILENAME = 'red-alert.pid'
 
 Notify.init(NOTIFY_INSTANCE_ID)
+
 
 class RedAlertNotification:
     def __init__(self):
         super().__init__()
         self.notification = Notify.Notification()
         self.notification.set_urgency(Notify.Urgency.CRITICAL)
+
+        self.is_singleton_program = True
 
         self.last_id = '0'
         json_data = open('cities.json')
@@ -45,6 +50,16 @@ class RedAlertNotification:
         pass
 
     def main_loop(self):
+        # Is Another Running?
+        if self.is_singleton_program:
+            pid_file = open(PID_FILENAME, 'w')
+
+            try:
+                fcntl.lockf(pid_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except IOError:
+                print('Another instance is already running, quitting.')
+                sys.exit(1)
+
         while True:
             try:
                 n = set()
