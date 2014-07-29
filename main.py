@@ -30,7 +30,7 @@ class RedAlertNotification:
 
     @staticmethod
     def _get_cities_data():
-        json_data = open('cities.json')
+        json_data = open('resources/cities.json')
         cities = json.load(json_data)
         json_data.close()
 
