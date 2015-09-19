@@ -9,7 +9,7 @@ import sys
 import fcntl
 from gi.repository import Notify
 
-OREF_JSON_URL = 'http://www.oref.org.il/WarningMessages/alerts.json'
+OREF_JSON_URL = 'http://www.oref.org.il/WarningMessages/Alert/alerts.json?v=1'
 MINUTES_TO_WAIT = 2
 NOTIFY_INSTANCE_ID = 'red_alert_notification'
 PID_FILENAME = 'red-alert.pid'
